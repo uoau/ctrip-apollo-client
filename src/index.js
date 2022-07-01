@@ -84,8 +84,6 @@ class Client {
             this.polling()
         }, 1)
 
-        global._apollo = this
-
         this.init()
     }
 
@@ -311,21 +309,23 @@ class Client {
 
     // 通过 getter 实现获取最新配置
     hotValue (field, namespace = 'application') {
+        const that = this;
         return new (class Value {
             get value () {
-                return global._apollo.getValue(field, namespace)
+                return that.getValue(field, namespace)
             }
         })()
     }
 
     withValue (target, key, field, namespace = 'application') {
+        const that = this;
         if (delete target[key]) {
             Object.defineProperty(target, key, {
                 get: () => {
-                    return global._apollo.getValue(field, namespace)
+                    return that.getValue(field, namespace)
                 },
                 set: () => {
-                    return global._apollo.getValue(field, namespace)
+                    return that.getValue(field, namespace)
                 },
                 enumerable: true,
                 configurable: true
@@ -334,11 +334,12 @@ class Client {
     }
 
     static value (field, namespace) {
+        const that = this;
         return function (target, key) {
             delete target[key]
             Object.defineProperty(target, key, {
                 get: function () {
-                    return global._apollo.getValue(field, namespace)
+                    return that.getValue(field, namespace)
                 },
                 enumerable: true,
                 configurable: true
@@ -347,11 +348,11 @@ class Client {
     }
 
     static hotValue (field, namespace = 'application') {
-        return global._apollo.hotValue(field, namespace)
+        return this.hotValue(field, namespace)
     }
 
     static withValue (target, key, field, namespace = 'application') {
-        return global._apollo.withValue(target, key, field, namespace)
+        return this.withValue(target, key, field, namespace)
     }
 
     /**
