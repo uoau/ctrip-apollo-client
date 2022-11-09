@@ -1,4 +1,4 @@
-const axios = require('./utils').axios
+const axios = require('axios');
 const Promise = require('bluebird')
 const debug = require('debug')('ctrip-apollo-client')
 const set = require('set-value')
